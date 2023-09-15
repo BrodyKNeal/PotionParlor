@@ -18,11 +18,13 @@ public class Interact : MonoBehaviour
     public Transform playerObject; //The location of the player object in the scene
     public KeyCode interactKey = KeyCode.E; //What key to be pressed to interact
     public float InteractRange; //How long is the ray sent out to trigger the interact on the object.
+    private int playerLayer; //The layermask that ignores the playerObject. Just put objects you want to ignore on the player layer
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerLayer = LayerMask.NameToLayer("Interact_Ignore"); 
     }
 
     // Update is called once per frame
@@ -33,10 +35,10 @@ public class Interact : MonoBehaviour
         Debug.DrawRay(transform.position, Vector2.left, Color.green);
         if (Input.GetKeyDown(interactKey))
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left), InteractRange);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left), InteractRange, playerLayer); //Sends out a raycast to hit objects, ignoring the "interact_ignore" layer
             if(hit)
             {
-                if(hit.collider.TryGetComponent<IInteractable>(out IInteractable hitobject))
+                if (hit.collider.TryGetComponent<IInteractable>(out IInteractable hitobject))
                 {
                     hitobject.Interact();
                 }
