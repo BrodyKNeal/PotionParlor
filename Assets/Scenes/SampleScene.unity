@@ -681,6 +681,7 @@ MonoBehaviour:
   lines:
     lines:
     - text: It's a cauldron!
+    - text: Pretty cool huh?
 --- !u!61 &684109621
 BoxCollider2D:
   m_ObjectHideFlags: 0

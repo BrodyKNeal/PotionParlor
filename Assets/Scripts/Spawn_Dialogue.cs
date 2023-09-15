@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Dialogue_namespace;
 
-public class Cauldron : MonoBehaviour, IInteractable
+public class Spawn_Dialogue : MonoBehaviour, IInteractable
 {
 
     public Dialogue_Enabler dialogue_Enabler;
@@ -11,7 +11,6 @@ public class Cauldron : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        print("Cauldron: Cauldron was interacted with!");
         dialogue_Enabler.startDialogue(lines);
     }
 }
