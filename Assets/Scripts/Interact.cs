@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Add the Interactable modifer after any script's monoBehavior. This will allow you to call the Interact() script
+//Add the Interactable modifer after any script's monoBehavior. This will allow you to call the Interact() function in any script with the modifier!
 interface IInteractable
 {
     void Interact();
@@ -23,16 +23,20 @@ enum Direction
 
 public class Interact : MonoBehaviour
 {
+    
     public Transform playerObject; //The location of the player object in the scene
     public KeyCode interactKey = KeyCode.E; //What key to be pressed to interact
     public float InteractRange; //How long is the ray sent out to trigger the interact on the object.
+    [Header("Optional: Dialogue_Enabler object so the interact can disable itself in dialogue")]
+    public Dialogue_Enabler dialogueObj;
     private int playerLayer; //The layermask that ignores the playerObject. Just put objects you want to ignore on the player layer
     private Direction direction; //What direction is the player moving in?
-
+    private bool canInteract = true; //Is the player allowed to interact at this point?
     // Start is called before the first frame update
     void Start()
     {
         playerLayer = LayerMask.NameToLayer("Interact_Ignore"); //Get the layer to ignore.
+        Dialogue_Enabler.whatToDoOnDialogueToggle += disableInteraction; //Subscribe to "event" in dialogue enabler to disable interactions when dialogue begins
     }
 
     //Sends out a raycast based on where the player is facing
@@ -62,6 +66,25 @@ public class Interact : MonoBehaviour
                 return Direction.UP;
             }
         }
+    }
+
+    private void enableInteraction()
+    {
+        print("Interact: Interaction enabled!");
+        //Next time dialogue toggled, disable interaction
+        Dialogue_Enabler.whatToDoOnDialogueToggle -= enableInteraction;
+        Dialogue_Enabler.whatToDoOnDialogueToggle += disableInteraction;
+        
+        canInteract = true;
+    }
+
+    private void disableInteraction()
+    {
+        print("Interact: Interaction disabled!");
+        //Next time dialogue toggled, bring back interaction
+        Dialogue_Enabler.whatToDoOnDialogueToggle -= disableInteraction;
+        Dialogue_Enabler.whatToDoOnDialogueToggle += enableInteraction;
+        canInteract = false;
     }
 
     //Sends out a raycast based on the direction of the player. Ignores the playerLayer, defined as Interact_Ignore
@@ -117,7 +140,7 @@ public class Interact : MonoBehaviour
         //This draws the ray in the game window if you have "Gizmos" button turned on.
         //It will help visualize the interact range.
         drawRaycast();
-        if (Input.GetKeyDown(interactKey))
+        if (Input.GetKeyDown(interactKey) && canInteract)
         {
             RaycastHit2D hit = sendRaycast(); //Sends out a raycast to hit objects, ignoring the "interact_ignore" layer
 
