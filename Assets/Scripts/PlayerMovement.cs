@@ -29,9 +29,13 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("Speed", movement.sqrMagnitude); //Sets the animator's variable called "Speed" to the magnitude of the player's movement
     }
 
-    //The update method that's better for physics
+    //Has the player actually move according to what buttons are pressed.
     void FixedUpdate()
     {
-        body.MovePosition(body.position + movement * moveSpeed * Time.fixedDeltaTime);
+        //The math clamp prevents the player from increasing speed over time.
+        float xVelocity = Mathf.Clamp((movement.x * moveSpeed * Time.fixedDeltaTime),-moveSpeed,moveSpeed); 
+        float yVelocity = Mathf.Clamp((movement.y * moveSpeed * Time.fixedDeltaTime), -moveSpeed, moveSpeed);
+        body.velocity = new Vector2(xVelocity, yVelocity);
+        //body.MovePosition(body.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 }

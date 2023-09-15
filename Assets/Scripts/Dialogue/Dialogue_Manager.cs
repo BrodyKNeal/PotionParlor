@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Dialogue_namespace;
 using TMPro; //Allows us to edit textMeshPro
 
 #if UNITY_EDITOR
@@ -12,18 +13,7 @@ using UnityEditor;
 
 public class Dialogue_Manager : MonoBehaviour
 {
-    //JSON setup
-    [System.Serializable]
-    public class Line //The child variables within the JSON file. Make sure this is the same as the child vars in the file!
-    {
-        public string text; //The line of dialogue.
-    }
 
-    [System.Serializable]
-    public class Dialogue //the container for dialogue lines
-    {
-        public Line[] lines; //Make sure this variable name is equal to the parent variable name within the file.
-    }
 
     //Do some custom editing for text delay
     #region Editor_Fun_Stuff
@@ -60,13 +50,11 @@ public class Dialogue_Manager : MonoBehaviour
 #endif
     #endregion
 
-    [Header("Add scene components")]
-
     [Header("Add child components")]
     public TextMeshProUGUI shown_line; //The actual gameObject that shows the dialogue text to the player. This should be a child.
     [Header("Fun stuff if you wanna mess around.")]
     private float text_delay = 0.05f; //Delay between characters appearing in WriteDialogue. If you modify me, modify the other me in the editor fun stuff!
-
+    public KeyCode nextLineKey = KeyCode.E; //What key should be pressed to go to the next dialogue line?
     public int cur_line = 0; //The currently displayed line to the player. Best not to actually touch this
     public bool is_typing = false; //Is the dialogue still typing letter by letter? Used to prevent player from insta-skipping until dialogue line is done typing.
 
@@ -76,16 +64,19 @@ public class Dialogue_Manager : MonoBehaviour
     //Local vriables within this script file.
     private Dialogue dialogue = new Dialogue();
 
-    // Start is called before the first frame update
-    void Start()
+    //Update the dialogue lines to show, then begin speaking from the start
+    //This should be called by the parent Dialogue_Enabler object
+    public void beginSpeaking(Dialogue received_lines)
     {
+        dialogue = received_lines; //Update the 
+        cur_line = 0;
         update_dialogue(); //Show the first line of dialogue
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown(nextLineKey))
         {
             //While the game is not typing out its dialogue and the dialogue has not reached the end, then go to next line
             //Otherwise, leave the cutscene
@@ -113,7 +104,7 @@ public class Dialogue_Manager : MonoBehaviour
         shown_line.text = ""; //Reset the current dialogue.
 
         //Then start the Coroutine to write the text to the shown_line text object
-        StartCoroutine(WriteDialogue("Hello world!"));
+        StartCoroutine(WriteDialogue(dialogue.lines[cur_line].text));
         // ***END OF DO NOT TOUCH**
     }
 
@@ -137,7 +128,7 @@ public class Dialogue_Manager : MonoBehaviour
     }
 
     //When all dialogue has been exhausted 
-    //Then leave the cutscene by giving player movement back and disabling dialogue.
+    // leave the cutscene by disabling this object
     public void LeaveCutscene()
     {
         this.gameObject.SetActive(false); //Then disable the dialogue manager object
