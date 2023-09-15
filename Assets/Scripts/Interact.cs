@@ -64,7 +64,7 @@ public class Interact : MonoBehaviour
         }
     }
 
-    //Sends out a raycast based on the direction of the player
+    //Sends out a raycast based on the direction of the player. Ignores the playerLayer, defined as Interact_Ignore
     RaycastHit2D sendRaycast()
     {
         switch(direction)
@@ -83,7 +83,7 @@ public class Interact : MonoBehaviour
         }
     }
 
-    //Draws out a raycast based on the direction of the player
+    //Draws out a raycast based on the direction of the player. Only visible in the editor
     void drawRaycast()
     {
         switch (direction)
@@ -115,7 +115,7 @@ public class Interact : MonoBehaviour
         }
 
         //This draws the ray in the game window if you have "Gizmos" button turned on.
-        //It will help visualize the interact range
+        //It will help visualize the interact range.
         drawRaycast();
         if (Input.GetKeyDown(interactKey))
         {
