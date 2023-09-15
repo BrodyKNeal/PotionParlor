@@ -70,7 +70,6 @@ public class Interact : MonoBehaviour
 
     private void enableInteraction()
     {
-        print("Interact: Interaction enabled!");
         //Next time dialogue toggled, disable interaction
         Dialogue_Enabler.whatToDoOnDialogueToggle -= enableInteraction;
         Dialogue_Enabler.whatToDoOnDialogueToggle += disableInteraction;
@@ -80,7 +79,6 @@ public class Interact : MonoBehaviour
 
     private void disableInteraction()
     {
-        print("Interact: Interaction disabled!");
         //Next time dialogue toggled, bring back interaction
         Dialogue_Enabler.whatToDoOnDialogueToggle -= disableInteraction;
         Dialogue_Enabler.whatToDoOnDialogueToggle += enableInteraction;
@@ -139,7 +137,9 @@ public class Interact : MonoBehaviour
 
         //This draws the ray in the game window if you have "Gizmos" button turned on.
         //It will help visualize the interact range.
-        drawRaycast();
+        if (canInteract)
+            drawRaycast();
+
         if (Input.GetKeyDown(interactKey) && canInteract)
         {
             RaycastHit2D hit = sendRaycast(); //Sends out a raycast to hit objects, ignoring the "interact_ignore" layer

@@ -54,7 +54,7 @@ public class Dialogue_Manager : MonoBehaviour
     public TextMeshProUGUI shown_line; //The actual gameObject that shows the dialogue text to the player. This should be a child.
     [Header("Fun stuff if you wanna mess around.")]
     private float text_delay = 0.05f; //Delay between characters appearing in WriteDialogue. If you modify me, modify the other me in the editor fun stuff!
-
+    public KeyCode nextLineKey = KeyCode.E; //What key should be pressed to go to the next dialogue line?
     public int cur_line = 0; //The currently displayed line to the player. Best not to actually touch this
     public bool is_typing = false; //Is the dialogue still typing letter by letter? Used to prevent player from insta-skipping until dialogue line is done typing.
 
@@ -76,7 +76,7 @@ public class Dialogue_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown(nextLineKey))
         {
             //While the game is not typing out its dialogue and the dialogue has not reached the end, then go to next line
             //Otherwise, leave the cutscene
